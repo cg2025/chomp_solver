@@ -2,6 +2,8 @@ mod state;
 mod transitions;
 mod solver;
 mod policy;
+mod env;
+mod agent;
 
 use state::State;
 use solver::Solver;
