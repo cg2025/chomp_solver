@@ -8,6 +8,10 @@ mod agent;
 use state::State;
 use solver::Solver;
 use policy::best_move;
+use env::ChompEnv;
+use agent::random_action;
+use policy::best_move;
+
 
 // generate monotonic states
 fn get_states(start: u8, m: usize) -> Vec<State> {
@@ -28,6 +32,30 @@ fn get_states(start: u8, m: usize) -> Vec<State> {
     result
 }
 
+fn run_episode(env: &mut ChompEnv) -> i32 {
+    let mut total_reward = 0;
+
+    loop {
+        let actions = env.valid_actions();
+
+        if actions.is_empty() {
+            break;
+        }
+
+        let action = actions[0];
+
+        let result = env.step(action);
+
+        total_reward += result.reward;
+
+        if result.done {
+            return total_reward;
+        }
+    }
+
+    total_reward
+}
+
 fn main() {
     let mut state_space = Vec::new();
 
@@ -42,11 +70,34 @@ fn main() {
 
     let initial = State::new(vec![8, 8, 8, 8, 8]);
 
-    initial.pretty_print();
+    let mut env = ChompEnv::new(initial.clone());
 
-    if let Some((row, amount)) = best_move(&solver, &initial) {
-        println!("Best move: row {}, remove {}", row + 1, amount);
-    } else {
-        println!("No winning move");
+    println!("Starting RL-style simulation...");
+    env.state.pretty_print();
+
+    loop {
+        let actions = env.valid_actions();
+
+        if actions.is_empty() {
+            break;
+        }
+
+        // hybrid policy: optimal if available, else random
+        let action = if let Some((r, a)) = best_move(&solver, &env.state) {
+            (r, a)
+        } else {
+            random_action(&actions).unwrap()
+        };
+
+        println!("Action taken: {:?}", action);
+
+        let result = env.step(action);
+
+        result.state.pretty_print();
+
+        if result.done {
+            println!("Game over. Reward: {}", result.reward);
+            break;
+        }
     }
 }
