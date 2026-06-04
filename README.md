@@ -1,15 +1,33 @@
-Chomp Solver (Rust / Solana Blockchain)
+# Chomp Solver: State-Space Search & Minimax Engine in Rust
 
-This project implements a solver for the combinatorial game Chomp using Rust. It constructs the full reachable state space, evaluates positions using a minimax-style dynamic programming approach, and identifies optimal moves from any board state.
+Overview
 
-The solver is designed as a Solana-oriented system, focused on deterministic game logic in Rust. It runs off-chain for fast evaluation but is structured to be adaptable for on-chain deployment, game verification, and trustless competitive systems on Solana.
+This project implements a full state-space solver for the combinatorial game Chomp using dynamic programming and minimax reasoning.
 
-Game Overview
+The system enumerates valid states, computes optimal policies, and identifies winning configurations. It is structured as a lightweight simulation framework, enabling experimentation and future reinforcement learning extensions.
 
-Chomp is a two-player grid-based game where players alternately select a cell, removing it and everything to its right and below. The objective is to avoid being forced into the losing state.
+## Features
 
-This Solver
-1. Generates all valid game states up to a fixed board size
-2. Builds a state transition graph
-3. Computes win/loss values using backward induction
-4. Determines optimal moves from any given position
+- State-space generation with combinatorial constraints
+- Transition function for legal moves
+- Dynamic programming over game graph
+- Minimax-style value computation
+- Optimal policy extraction
+
+## Architecture
+
+State Generation → Transition Function → Value Computation → Policy Extraction
+
+
+## Performance
+
+- Explores full state space up to size 8
+- Efficient due to monotonic constraints
+- Linear pass DP over states
+
+## Future Work
+
+- RL agent (Q-learning / PPO)
+- Gym-style environment wrapper
+- Parallel state computation
+- Larger combinatorial games
